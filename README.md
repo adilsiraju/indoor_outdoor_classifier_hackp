@@ -1,6 +1,6 @@
 # Indoor/Outdoor Image Classifier
 
-This project is a simple image classification pipeline to distinguish between indoor and outdoor scenes using deep learning. It uses **FastAI** and a small custom dataset, with images downloaded from Bing and DuckDuckGo. The workflow includes data collection, cleaning, model training, and evaluation.  
+This project is a simple image classification pipeline to distinguish between indoor and outdoor scenes using deep learning. It uses **FastAI** and a small custom dataset, with images downloaded from Bing. The workflow includes data collection, cleaning, model training, and evaluation.  
 
 🚀 **With just 60 training images, the model achieved 91% accuracy.**
 
@@ -19,7 +19,7 @@ The classifier is also deployed on Hugging Face Spaces:
 The GitHub Pages site uses the Hugging Face API for live predictions.  
 
 ## Features
-- Downloads images for 'Indoor' and 'Outdoor' classes using Bing and DuckDuckGo  
+- Downloads images for 'Indoor' and 'Outdoor' classes using Bing Images  
 - Cleans and verifies images  
 - Trains a ResNet-based classifier using FastAI  
 - Achieved **91% accuracy with just 60 training images**  
