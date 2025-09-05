@@ -1,0 +1,184 @@
+---
+title: Indoor-Outdoor Classifier
+layout: default
+---
+
+<style>
+  .app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .upload-section {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 40px 20px;
+    margin: 30px 0;
+    transition: all 0.3s ease;
+  }
+  
+  .upload-section:hover {
+    border-color: #007bff;
+    background: #f0f8ff;
+  }
+  
+  .file-input {
+    display: none;
+  }
+  
+  .upload-btn {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  }
+  
+  .upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+  }
+  
+  .upload-btn:active {
+    transform: translateY(0);
+  }
+  
+  .results {
+    margin-top: 30px;
+    padding: 20px;
+  }
+  
+  .result-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+  }
+  
+  .prediction {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  }
+  
+  .processing {
+    color: #007bff;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .error {
+    background: #dc3545;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .app-container {
+      padding: 15px;
+    }
+    
+    .upload-section {
+      padding: 30px 15px;
+      margin: 20px 0;
+    }
+    
+    .upload-btn {
+      padding: 12px 25px;
+      font-size: 14px;
+    }
+    
+    .result-image {
+      max-width: 90%;
+    }
+    
+    .prediction {
+      font-size: 16px;
+      padding: 12px 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 24px;
+    }
+    
+    .upload-section {
+      padding: 25px 10px;
+    }
+    
+    .upload-btn {
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<div class="app-container">
+  <h1>Instantly Classify Indoor / Outdoor Areas</h1>
+  <p>Upload an image of an area to classify if its Indoor or Outdoor</p>
+
+  <div class="upload-section">
+    <input id="photo" class="file-input" type="file" accept="image/*">
+    <button class="upload-btn" onclick="document.getElementById('photo').click()">
+      📸 Upload an Area Photo
+    </button>
+    <p style="margin-top: 15px; color: #6c757d; font-size: 14px;">
+      Supports JPG, PNG, WebP formats
+    </p>
+  </div>
+  
+  <div id="results" class="results"></div>
+</div>
+
+<script type="module">
+  import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+  const photo = document.getElementById("photo");
+  const results = document.getElementById("results");
+
+  async function loaded(file) {
+    try {
+      results.innerHTML = '<p class="processing">🔄 Processing your image...</p>';
+      const app = await client("adilsiraju/Indoor_outdoor_classifier");
+
+      const result = await app.predict("/predict", [
+        file
+      ]);
+
+      console.log(result.data);
+
+      const label = result.data[0]?.label || "Unknown";
+      results.innerHTML = `
+        <img src="${URL.createObjectURL(file)}" class="result-image" alt="Uploaded architecture">
+        <div class="prediction">🏛️ Style: ${label}</div>
+      `;
+    } catch (error) {
+      console.error('Error:', error);
+      results.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+    }
+  }
+
+  photo.addEventListener("change", () => {
+    const file = photo.files[0];
+    if (file) loaded(file);
+  });
+</script>
